@@ -138,7 +138,7 @@ class GraniteClient:
             if "LIVE MATCH DATA" in prompt:
 
                 match = re.search(
-                    r"LIVE MATCH DATA.*?\n(\{.*\})",
+                    r"LIVE MATCH DATA.*?(\{[\s\S]*?\})\s*$",
                     prompt,
                     re.DOTALL,
                 )
@@ -241,26 +241,24 @@ FootballIQ AI analysed the historical statistics provided by the application.
 Instead of simply reporting the score, the system interprets:
 
 • Head-to-head history
-
 • Goal-scoring patterns
-
 • Tournament significance
-
 • Team momentum
-
 • Match trends
 
 ---
 
 ## Tactical Insight
 
-Historical football matches are often influenced by tactical discipline, efficient finishing and momentum rather than possession alone.
+Historical football matches are often influenced by tactical discipline,
+efficient finishing and momentum rather than possession alone.
 
 ---
 
 ## Why It Matters
 
-Understanding *why* a team won gives fans a much richer understanding than simply reading the final score.
+Understanding *why* a team won gives fans a much richer understanding
+than simply reading the final score.
 
 ---
 
@@ -269,16 +267,17 @@ Understanding *why* a team won gives fans a much richer understanding than simpl
 IBM Granite credentials are not configured, so this explanation has been generated locally.
 """
 
-    except Exception:
+        except Exception:
 
-        return """
+            return """
 # ⚽ FootballIQ AI
 
 Offline mode is active.
 
 The application is functioning correctly, but IBM Granite credentials have not been configured.
 
-Once WATSONX_API_KEY and WATSONX_PROJECT_ID are added, FootballIQ AI will automatically generate richer explanations using IBM Granite.
+Once WATSONX_API_KEY and WATSONX_PROJECT_ID are added,
+FootballIQ AI will automatically generate richer explanations using IBM Granite.
 """
 
 
