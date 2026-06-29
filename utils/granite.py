@@ -119,130 +119,130 @@ class GraniteClient:
     # ------------------------------------------------------------------ #
     # Offline fallback (no API key / no network)
     # ------------------------------------------------------------------ #
-        @staticmethod
-        def _offline_fallback(prompt: str) -> str:
-            """
-            Offline AI explanation generator.
-            Produces a readable explanation when IBM Granite credentials
-            are unavailable.
-            """
+    @staticmethod
+    def _offline_fallback(prompt: str) -> str:
+        """
+        Offline AI explanation generator.
+        Produces a readable explanation when IBM Granite credentials
+        are unavailable.
+        """
 
-            try:
+        try:
 
-                # -----------------------------
-                # LIVE MATCH MODE
-                # -----------------------------
-                if "LIVE MATCH DATA" in prompt:
+            # -----------------------------
+            # LIVE MATCH MODE
+            # -----------------------------
+            if "LIVE MATCH DATA" in prompt:
 
-                    home = away = "Team A"
-                    hs = aw = 0
-                    minute = 0
+                home = away = "Team A"
+                hs = aw = 0
+                minute = 0
 
-                    try:
-                        home = re.search(r"'home_team': '([^']+)'", prompt).group(1)
-                        away = re.search(r"'away_team': '([^']+)'", prompt).group(1)
+                try:
+                    home = re.search(r"'home_team': '([^']+)'", prompt).group(1)
+                    away = re.search(r"'away_team': '([^']+)'", prompt).group(1)
 
-                        hs = int(re.search(r"'home_score': (\d+)", prompt).group(1))
-                        aw = int(re.search(r"'away_score': (\d+)", prompt).group(1))
+                    hs = int(re.search(r"'home_score': (\d+)", prompt).group(1))
+                    aw = int(re.search(r"'away_score': (\d+)", prompt).group(1))
 
-                        minute = int(re.search(r"'minute': (\d+)", prompt).group(1))
-                    except Exception:
-                        pass
+                    minute = int(re.search(r"'minute': (\d+)", prompt).group(1))
+                except Exception:
+                    pass
 
-                    if hs > aw:
-                        leader = home
-                        summary = f"{home} currently lead after making better use of their chances."
-                    elif aw > hs:
-                        leader = away
-                        summary = f"{away} currently lead after making better use of their chances."
-                    else:
-                        leader = None
-                        summary = "The match is evenly balanced with both teams still searching for the winning advantage."
+                if hs > aw:
+                    leader = home
+                    summary = f"{home} currently lead after making better use of their chances."
+                elif aw > hs:
+                    leader = away
+                    summary = f"{away} currently lead after making better use of their chances."
+                else:
+                    leader = None
+                    summary = "The match is evenly balanced with both teams still searching for the winning advantage."
 
-                    return f"""
-    # ⚽ FootballIQ AI
+                return f"""
+# ⚽ FootballIQ AI
 
-    ## Live Match Explanation
+## Live Match Explanation
 
-    At the **{minute}th minute**, the score is:
+At the **{minute}th minute**, the score is:
 
-    **{home} {hs} - {aw} {away}**
+**{home} {hs} - {aw} {away}**
 
-    ### Match Summary
+### Match Summary
 
-    {summary}
+{summary}
 
-    ### Tactical Insight
+### Tactical Insight
 
-    The scoreline alone never tells the full story.
+The scoreline alone never tells the full story.
 
-    Momentum in football comes from creating quality chances, controlling important phases of play, and responding well under pressure.
+Momentum in football comes from creating quality chances, controlling important phases of play, and responding well under pressure.
 
-    As the match progresses, tactical adjustments, substitutions and defensive organization can quickly change the balance of the game.
+As the match progresses, tactical adjustments, substitutions and defensive organization can quickly change the balance of the game.
 
-    ### Why this matters
+### Why this matters
 
-    FootballIQ AI focuses on explaining **why** a match looks the way it does instead of predicting what will happen next.
+FootballIQ AI focuses on explaining **why** a match looks the way it does instead of predicting what will happen next.
 
-    ---
-    ⚠️ Offline AI Mode
+---
+⚠️ Offline AI Mode
 
-    IBM Granite credentials are not configured.
+IBM Granite credentials are not configured.
 
-    This explanation has been generated locally from the available match statistics.
-    """
+This explanation has been generated locally from the available match statistics.
+"""
 
-                # -----------------------------
-                # HISTORICAL MODE
-                # -----------------------------
+            # -----------------------------
+            # HISTORICAL MODE
+            # -----------------------------
 
-                return """
-    # ⚽ FootballIQ AI
+            return """
+# ⚽ FootballIQ AI
 
-    ## Historical Match Analysis
+## Historical Match Analysis
 
-    FootballIQ AI analysed the historical information available for this fixture.
+FootballIQ AI analysed the historical information available for this fixture.
 
-    Instead of only displaying statistics, the AI explains:
+Instead of only displaying statistics, the AI explains:
 
-    • Head-to-head history
+• Head-to-head history
 
-    • Goal-scoring trends
+• Goal-scoring trends
 
-    • Tournament context
+• Tournament context
 
-    • Team momentum
+• Team momentum
 
-    • Tactical significance
+• Tactical significance
 
-    ### Tactical Insight
+### Tactical Insight
 
-    Historical matches are influenced by tactical discipline, finishing efficiency, defensive organization and momentum shifts throughout the game.
+Historical matches are influenced by tactical discipline, finishing efficiency, defensive organization and momentum shifts throughout the game.
 
-    Understanding these factors gives fans a much deeper appreciation of football than simply reading the final score.
+Understanding these factors gives fans a much deeper appreciation of football than simply reading the final score.
 
-    ---
-    ⚠️ Offline AI Mode
+---
+⚠️ Offline AI Mode
 
-    IBM Granite credentials are not configured.
+IBM Granite credentials are not configured.
 
-    This explanation has been generated locally from historical match statistics.
-    """
+This explanation has been generated locally from historical match statistics.
+"""
 
-            except Exception:
+        except Exception:
 
-                return """
-    # ⚽ FootballIQ AI
+            return """
+# ⚽ FootballIQ AI
 
-    Offline mode is active.
+Offline mode is active.
 
-    The application is working correctly.
+The application is working correctly.
 
-    IBM Granite credentials are not configured.
+IBM Granite credentials are not configured.
 
-    Once WATSONX_API_KEY and WATSONX_PROJECT_ID are added to the .env file,
-    FootballIQ AI will automatically use IBM Granite to generate richer explanations.
-    """
+Once WATSONX_API_KEY and WATSONX_PROJECT_ID are added to the .env file,
+FootballIQ AI will automatically use IBM Granite to generate richer explanations.
+"""
 
 
 # Module-level singleton so Streamlit pages can share one client across reruns.
