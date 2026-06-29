@@ -119,166 +119,130 @@ class GraniteClient:
     # ------------------------------------------------------------------ #
     # Offline fallback (no API key / no network)
     # ------------------------------------------------------------------ #
-    @staticmethod
-    def _offline_fallback(prompt: str) -> str:
-        """
-        Intelligent offline AI explanation.
+        @staticmethod
+        def _offline_fallback(prompt: str) -> str:
+            """
+            Offline AI explanation generator.
+            Produces a readable explanation when IBM Granite credentials
+            are unavailable.
+            """
 
-        Instead of showing the raw prompt, this function extracts the
-        structured football statistics already embedded in the prompt
-        and generates a natural explanation similar to IBM Granite.
-        """
+            try:
 
-        try:
+                # -----------------------------
+                # LIVE MATCH MODE
+                # -----------------------------
+                if "LIVE MATCH DATA" in prompt:
 
-            # ----------------------------
-            # LIVE MATCH
-            # ----------------------------
+                    home = away = "Team A"
+                    hs = aw = 0
+                    minute = 0
 
-            if "LIVE MATCH DATA" in prompt:
+                    try:
+                        home = re.search(r"'home_team': '([^']+)'", prompt).group(1)
+                        away = re.search(r"'away_team': '([^']+)'", prompt).group(1)
 
-                match = re.search(
-                    r"LIVE MATCH DATA.*?\n(\{.*\})",
-                    prompt,
-                    re.DOTALL,
-                )
+                        hs = int(re.search(r"'home_score': (\d+)", prompt).group(1))
+                        aw = int(re.search(r"'away_score': (\d+)", prompt).group(1))
 
-                if match:
+                        minute = int(re.search(r"'minute': (\d+)", prompt).group(1))
+                    except Exception:
+                        pass
 
-                    data = ast.literal_eval(match.group(1))
-
-                    home = data["home_team"]
-                    away = data["away_team"]
-
-                    hs = data["home_score"]
-                    aw = data["away_score"]
-
-                    minute = data["minute"]
-
-                    pos_h = data["possession"]["home"]
-                    pos_a = data["possession"]["away"]
-
-                    shots_h = data["shots"]["home"]
-                    shots_a = data["shots"]["away"]
-
-                    target_h = data["shots_on_target"]["home"]
-                    target_a = data["shots_on_target"]["away"]
-
-                    corners_h = data["corners"]["home"]
-                    corners_a = data["corners"]["away"]
-
-                    fouls_h = data["fouls"]["home"]
-                    fouls_a = data["fouls"]["away"]
-
-                    leader = home if hs > aw else away if aw > hs else None
+                    if hs > aw:
+                        leader = home
+                        summary = f"{home} currently lead after making better use of their chances."
+                    elif aw > hs:
+                        leader = away
+                        summary = f"{away} currently lead after making better use of their chances."
+                    else:
+                        leader = None
+                        summary = "The match is evenly balanced with both teams still searching for the winning advantage."
 
                     return f"""
-# ⚽ FootballIQ AI
+    # ⚽ FootballIQ AI
 
-### Match Summary
+    ## Live Match Explanation
 
-At the **{minute}th minute**, **{home}** lead **{away}** **{hs}-{aw}**.
+    At the **{minute}th minute**, the score is:
 
-{"{} currently have the advantage after converting their chances more efficiently.".format(leader) if leader else "The score is level, making this an evenly contested match."}
+    **{home} {hs} - {aw} {away}**
 
----
+    ### Match Summary
 
-## Possession & Control
+    {summary}
 
-- {home}: **{pos_h}%**
-- {away}: **{pos_a}%**
+    ### Tactical Insight
 
-{"{} have dictated the tempo through better ball retention.".format(home if pos_h > pos_a else away)}
+    The scoreline alone never tells the full story.
 
----
+    Momentum in football comes from creating quality chances, controlling important phases of play, and responding well under pressure.
 
-## Attacking Threat
+    As the match progresses, tactical adjustments, substitutions and defensive organization can quickly change the balance of the game.
 
-- Shots: **{shots_h}-{shots_a}**
-- Shots on Target: **{target_h}-{target_a}**
-- Corners: **{corners_h}-{corners_a}**
+    ### Why this matters
 
-The team creating more shots on target has generated the clearer scoring opportunities rather than relying on speculative efforts.
+    FootballIQ AI focuses on explaining **why** a match looks the way it does instead of predicting what will happen next.
 
----
+    ---
+    ⚠️ Offline AI Mode
 
-## Defensive Discipline
+    IBM Granite credentials are not configured.
 
-- Fouls: **{fouls_h}-{fouls_a}**
+    This explanation has been generated locally from the available match statistics.
+    """
 
-The foul count reflects the intensity of the contest, with both teams attempting to disrupt each other's rhythm.
+                # -----------------------------
+                # HISTORICAL MODE
+                # -----------------------------
 
----
+                return """
+    # ⚽ FootballIQ AI
 
-## Tactical Insight
+    ## Historical Match Analysis
 
-Although possession is important, matches are ultimately decided by the quality of chances created and converted. The current statistics suggest that the leading team has combined territorial control with greater attacking efficiency.
+    FootballIQ AI analysed the historical information available for this fixture.
 
----
+    Instead of only displaying statistics, the AI explains:
 
-## Why It Matters
+    • Head-to-head history
 
-Football is more than numbers. Looking beyond the scoreline helps explain **why the match currently stands at {hs}-{aw}**, giving fans a clearer understanding of the tactical battle.
+    • Goal-scoring trends
 
----
+    • Tournament context
 
-⚠️ *Offline AI Mode*
+    • Team momentum
 
-IBM Granite credentials are not configured, so this explanation has been generated locally using the available match statistics.
-"""
+    • Tactical significance
 
-        # ----------------------------
-        # HISTORICAL MATCH
-        # ----------------------------
+    ### Tactical Insight
 
-        return """
-# ⚽ FootballIQ AI
+    Historical matches are influenced by tactical discipline, finishing efficiency, defensive organization and momentum shifts throughout the game.
 
-### Historical Match Analysis
+    Understanding these factors gives fans a much deeper appreciation of football than simply reading the final score.
 
-FootballIQ AI analysed the historical statistics provided by the application.
+    ---
+    ⚠️ Offline AI Mode
 
-Instead of simply reporting the score, the system interprets:
+    IBM Granite credentials are not configured.
 
-• Head-to-head history
-• Goal-scoring patterns
-• Tournament significance
-• Team momentum
-• Match trends
+    This explanation has been generated locally from historical match statistics.
+    """
 
----
+            except Exception:
 
-## Tactical Insight
+                return """
+    # ⚽ FootballIQ AI
 
-Historical football matches are often influenced by tactical discipline,
-efficient finishing and momentum rather than possession alone.
+    Offline mode is active.
 
----
+    The application is working correctly.
 
-## Why It Matters
+    IBM Granite credentials are not configured.
 
-Understanding *why* a team won gives fans a much richer understanding
-than simply reading the final score.
-
----
-
-⚠️ *Offline AI Mode*
-
-IBM Granite credentials are not configured, so this explanation has been generated locally.
-"""
-
-        except Exception:
-
-            return """
-# ⚽ FootballIQ AI
-
-Offline mode is active.
-
-The application is functioning correctly, but IBM Granite credentials have not been configured.
-
-Once WATSONX_API_KEY and WATSONX_PROJECT_ID are added,
-FootballIQ AI will automatically generate richer explanations using IBM Granite.
-"""
+    Once WATSONX_API_KEY and WATSONX_PROJECT_ID are added to the .env file,
+    FootballIQ AI will automatically use IBM Granite to generate richer explanations.
+    """
 
 
 # Module-level singleton so Streamlit pages can share one client across reruns.
