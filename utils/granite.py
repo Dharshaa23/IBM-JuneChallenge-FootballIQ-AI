@@ -138,7 +138,7 @@ class GraniteClient:
             if "LIVE MATCH DATA" in prompt:
 
                 match = re.search(
-                    r"LIVE MATCH DATA.*?(\{[\s\S]*?\})\s*$",
+                    r"LIVE MATCH DATA.*?\n(\{.*\})",
                     prompt,
                     re.DOTALL,
                 )
