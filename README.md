@@ -132,14 +132,9 @@ streamlit run app.py
 4. On **Ask FootballIQ**, ask any rules or history question in the chat box.
 5. Adjust **Explanation Mode** (Beginner/Fan/Analyst) and **Language** on any page.
 
-## Screenshots
+## Prototype Link
 
-_Add screenshots here before submission:_
-
-- `assets/screenshot_home.png`
-- `assets/screenshot_historical.png`
-- `assets/screenshot_live.png`
-- `assets/screenshot_chat.png`
+https://ibm-junechallenge-footballiq-ai-t9muqy2tjgbxe6wswze4su.streamlit.app/
 
 ## Future Work
 
